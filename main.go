@@ -252,8 +252,7 @@ func lihatJadwal() {
 
 	for i := 0; i < jadwalAda; i++ {
 		jadwal := jadwalBelajarData[i]
-		fmt.Printf("\nHari: %s\nWaktu: %s - %s\nTopik: %s\n",
-			jadwal.hari, jadwal.mulaiBelajar, jadwal.akhirBelajar, jadwal.topikBelajar)
+		fmt.Printf("\nHari: %s\nWaktu: %s - %s\nTopik: %s\n", jadwal.hari, jadwal.mulaiBelajar, jadwal.akhirBelajar, jadwal.topikBelajar)
 	}
 }
 
