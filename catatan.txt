@@ -1,5 +1,6 @@
 Program aplikasi ini dibuat sebagai pelengkap Tugas Besar Algoritma Pemrograman 2 
 
+KELOMPOK 14
 dibuat oleh :
 Nama : Oktafiana ramadhan
 NIM  : 103012400221
