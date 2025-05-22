@@ -1,6 +1,7 @@
 Program aplikasi ini dibuat sebagai pelengkap Tugas Besar Algoritma Pemrograman 2 
 
-KELOMPOK 14
+"APLIKASI AI ASISTEN BELAJAR & PENGINGAT JADWAL BELAJAR BERBASIS GOLANG"
+
 dibuat oleh :
 Nama : Oktafiana ramadhan
 NIM  : 103012400221
@@ -13,4 +14,8 @@ Mengelola Catatan (menambahkan, menghapus, mengubah)
 Menambahkan Jadwal (menambahkan, menghapus, mengubah)
 
 NOTE:
-Belum bisa menyimpan Catatan/Jadwal saat keluar program, Database hanya digunakan untuk menyimpan perubahan sementara jika Program masih Berjalan
+- Belum bisa menyimpan Catatan/Jadwal saat keluar program, Database hanya digunakan untuk menyimpan perubahan sementara jika Program masih Berjalan
+- sequential belum di test
+
+Masalah yang dihadapi: 
+- tidak bisa mengisi amteri dengan spasi atau lebih dari 1 baris = Menggunakan import bufio
