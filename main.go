@@ -145,17 +145,6 @@ func lihatSemuaCatatan() {
 	}
 }
 
-/*************  ✨ Windsurf Command ⭐  *************/
-// EditCatatan digunakan untuk mengedit catatan yang sudah ada.
-// Pengguna diharuskan memasukkan ID catatan yang ingin di edit.
-// Jika ID tidak ditemukan, maka program akan menampilkan pesan "Catatan tidak ditemukan".
-// Jika ID ditemukan, maka program akan menampilkan isian yang sekarang dan
-// memberikan kesempatan kepada pengguna untuk mengisi ulang.
-// Jika pengguna tidak ingin mengisi ulang, maka cukup tekan Enter saja.
-// Jika pengguna ingin mengisi ulang, maka isian yang sekarang akan dihapus dan digantikan
-// dengan isian yang baru.
-// Setelah pengguna selesai mengedit catatan, maka program akan menampilkan pesan "Catatan berhasil diperbarui".
-/*******  9f27b97e-5686-4c5b-ac87-99a4a7515319  *******/
 func editCatatan() {
 	var i, index int
 	fmt.Println("\nEdit Catatan")
