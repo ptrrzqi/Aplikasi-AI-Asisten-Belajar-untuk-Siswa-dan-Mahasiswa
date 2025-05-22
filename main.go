@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -29,28 +32,34 @@ const jadwalMax = 50
 var (
 	catatanData       [catatanMax]Catatan
 	jadwalBelajarData [jadwalMax]Jadwal
-	catatanAda        = 0
-	jadwalAda         = 0
-	IDcatatanAkhir    = 0
-	IDjadwalAkhir     = 0
+	catatanAda        int = 0
+	jadwalAda         int = 0
+	IDcatatanAkhir    int = 0
+	IDjadwalAkhir     int = 0
 )
 
 func main() {
+	var input int
+	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
+
 	for {
 		fmt.Println("\nSelamat datang di Aplikasi AI Manajemen Belajar")
 		fmt.Println("1. Kelola catatan belajar")
 		fmt.Println("2. Kelola jadwal belajar")
+		fmt.Println("3. Cari materi")
 		fmt.Println("0. Keluar")
 		fmt.Print("Pilih menu: ")
 
-		var input int
 		fmt.Scan(&input)
+		reader.Scan()
 
 		switch input {
 		case 1:
 			kelolaCatatan()
 		case 2:
 			kelolaJadwal()
+		case 3:
+			cariMateri()
 		case 0:
 			fmt.Println("Terima kasih telah menggunakan aplikasi ini!")
 			return
@@ -60,25 +69,10 @@ func main() {
 	}
 }
 
-func addCatatan(c Catatan) {
-	if catatanAda >= catatanMax {
-		fmt.Println("Catatan sudah penuh!")
-		return
-	}
-	catatanData[catatanAda] = c
-	catatanAda++
-}
-
-func addJadwal(j Jadwal) {
-	if jadwalAda >= jadwalMax {
-		fmt.Println("Jadwal sudah penuh!")
-		return
-	}
-	jadwalBelajarData[jadwalAda] = j
-	jadwalAda++
-}
-
 func kelolaCatatan() {
+	var input int
+	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
+
 	for {
 		fmt.Println("\nMenu Catatan Belajar")
 		fmt.Println("1. Tambah catatan")
@@ -88,8 +82,8 @@ func kelolaCatatan() {
 		fmt.Println("0. Kembali")
 		fmt.Print("Pilih menu: ")
 
-		var input int
 		fmt.Scan(&input)
+		reader.Scan()
 
 		switch input {
 		case 1:
@@ -108,21 +102,41 @@ func kelolaCatatan() {
 	}
 }
 
+func addCatatan(c Catatan) { //menambah data catatan
+	if catatanAda >= catatanMax {
+		fmt.Println("Catatan sudah penuh!")
+		return
+	}
+	catatanData[catatanAda] = c
+	catatanAda++
+}
+
 func tambahCatatan() {
+	var catatanBaru Catatan
+	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
+	var judul string
+	var topik string
+	var isi string
+
 	fmt.Println("\nTambah Catatan Baru")
 
 	IDcatatanAkhir++
-	var catatanBaru Catatan
 	catatanBaru.ID = IDcatatanAkhir
 
 	fmt.Print("Judul catatan: ")
-	fmt.Scan(&catatanBaru.judul)
+	reader.Scan()
+	judul = reader.Text()
+	catatanBaru.judul = judul
 
 	fmt.Print("Topik: ")
-	fmt.Scan(&catatanBaru.topik)
+	reader.Scan()
+	topik = reader.Text()
+	catatanBaru.topik = topik
 
 	fmt.Print("Isi materi: ")
-	fmt.Scan(&catatanBaru.isiMateri)
+	reader.Scan()
+	isi = reader.Text()
+	catatanBaru.isiMateri = isi
 
 	catatanBaru.waktu = time.Now()
 	addCatatan(catatanBaru)
@@ -138,21 +152,30 @@ func lihatSemuaCatatan() {
 	}
 
 	for i = 0; i < catatanAda; i++ {
-		catatan := catatanData[i]
-		fmt.Printf("\nID: %d\nJudul: %s\nTopik: %s\nTanggal: %s\nIsi: %s\n",
-			catatan.ID, catatan.judul, catatan.topik,
-			catatan.waktu.Format("2006-01-02 15:04"), catatan.isiMateri)
+		var catatan Catatan = catatanData[i]
+		catatanDetail(catatan)
 	}
 }
 
+func catatanDetail(c Catatan) {
+	fmt.Printf("\nID: %d\nJudul: %s\nTopik: %s\nTanggal: %s\nIsi: %s\n",
+		c.ID, c.judul, c.topik, c.waktu.Format("2025-01-02 15:04"), c.isiMateri)
+}
+
 func editCatatan() {
-	var i, index int
+	var i int
+	var index int = -1
+	var id int
+	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
+	var judul string
+	var topik string
+	var isi string
+	var catatan *Catatan = &catatanData[index]
+
 	fmt.Println("\nEdit Catatan")
 	fmt.Print("Masukkan ID catatan: ")
-	var id int
 	fmt.Scan(&id)
 
-	index = -1
 	for i = 0; i < catatanAda; i++ {
 		if catatanData[i].ID == id {
 			index = i
@@ -165,25 +188,23 @@ func editCatatan() {
 		return
 	}
 
-	catatan := &catatanData[index]
-
 	fmt.Printf("Judul (%s): ", catatan.judul)
-	var judul string
-	fmt.Scan(&judul)
+	reader.Scan()
+	judul = reader.Text()
 	if judul != "" {
 		catatan.judul = judul
 	}
 
 	fmt.Printf("Topik (%s): ", catatan.topik)
-	var topik string
-	fmt.Scan(&topik)
+	reader.Scan()
+	topik = reader.Text()
 	if topik != "" {
 		catatan.topik = topik
 	}
 
 	fmt.Printf("Isi (%s): ", catatan.isiMateri)
-	var isi string
-	fmt.Scan(&isi)
+	reader.Scan()
+	isi = reader.Text()
 	if isi != "" {
 		catatan.isiMateri = isi
 	}
@@ -192,13 +213,14 @@ func editCatatan() {
 }
 
 func hapusCatatan() {
-	var i, index int
+	var i int
+	var index int = -1
+	var id int
+
 	fmt.Println("\nHapus Catatan")
 	fmt.Print("Masukkan ID catatan: ")
-	var id int
 	fmt.Scan(&id)
 
-	index = -1
 	for i = 0; i < catatanAda; i++ {
 		if catatanData[i].ID == id {
 			index = i
@@ -220,6 +242,7 @@ func hapusCatatan() {
 }
 
 func kelolaJadwal() {
+	var input int
 	for {
 		fmt.Println("\nMenu Jadwal Belajar")
 		fmt.Println("1. Lihat jadwal")
@@ -228,7 +251,6 @@ func kelolaJadwal() {
 		fmt.Println("0. Kembali")
 		fmt.Print("Pilih menu: ")
 
-		var input int
 		fmt.Scan(&input)
 
 		switch input {
@@ -255,21 +277,21 @@ func lihatJadwal() {
 	}
 
 	for i = 0; i < jadwalAda; i++ {
-		jadwal := jadwalBelajarData[i]
+		var jadwal Jadwal = jadwalBelajarData[i]
 		fmt.Printf("\nHari: %s\nWaktu: %s - %s\nTopik: %s\n",
 			jadwal.hari, jadwal.mulaiBelajar, jadwal.akhirBelajar, jadwal.topikBelajar)
 	}
 }
 
 func tambahJadwal() {
+	var jadwalBaru Jadwal
+
 	fmt.Println("\nTambah Jadwal Baru")
 
 	if jadwalAda >= jadwalMax {
 		fmt.Println("Jadwal sudah penuh!")
 		return
 	}
-
-	var jadwalBaru Jadwal
 
 	fmt.Print("Hari (contoh: Senin): ")
 	fmt.Scan(&jadwalBaru.hari)
@@ -297,8 +319,20 @@ func tambahJadwal() {
 	fmt.Println("Jadwal berhasil ditambahkan!")
 }
 
+func addJadwal(j Jadwal) {
+	if jadwalAda >= jadwalMax {
+		fmt.Println("Jadwal sudah penuh!")
+		return
+	}
+	jadwalBelajarData[jadwalAda] = j
+	jadwalAda++
+}
+
 func validasiWaktu(waktu string) bool {
 	var i int
+	var jam int
+	var menit int
+
 	if len(waktu) != 5 {
 		return false
 	}
@@ -315,16 +349,18 @@ func validasiWaktu(waktu string) bool {
 		}
 	}
 
-	jam := (waktu[0]-'0')*10 + (waktu[1] - '0')
-	menit := (waktu[3]-'0')*10 + (waktu[4] - '0')
+	jam = (int(waktu[0])-'0')*10 + (int(waktu[1]) - '0')
+	menit = (int(waktu[3])-'0')*10 + (int(waktu[4]) - '0')
 
 	return jam < 24 && menit < 60
 }
 
 func hapusJadwal() {
+	var nomor int
+	var i int
+
 	fmt.Println("\nHapus Jadwal")
 	fmt.Print("Masukkan nomor urut jadwal: ")
-	var nomor int
 	fmt.Scan(&nomor)
 
 	if nomor < 1 || nomor > jadwalAda {
@@ -332,10 +368,125 @@ func hapusJadwal() {
 		return
 	}
 
-	for i := nomor - 1; i < jadwalAda-1; i++ {
+	for i = nomor - 1; i < jadwalAda-1; i++ {
 		jadwalBelajarData[i] = jadwalBelajarData[i+1]
 	}
 	jadwalAda--
 
 	fmt.Println("Jadwal berhasil dihapus")
+}
+
+func cariMateri() {
+	var input int
+	var keyWord string
+	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
+
+	for {
+		fmt.Println("\nPilih opsi pencarian materi")
+		fmt.Println("1. Berurutan (sequential)")
+		fmt.Println("2. Binary search")
+		fmt.Println("0. Kembali")
+		fmt.Print("Pilihan: ")
+
+		fmt.Scan(&input)
+		reader.Scan()
+
+		switch input {
+		case 1:
+			fmt.Print("\nKata Kunci: ")
+			reader.Scan()
+			keyWord = strings.ToLower(reader.Text())
+			searchSequential(keyWord)
+		case 2:
+			fmt.Print("\nKata Kunci: ")
+			reader.Scan()
+			keyWord = strings.ToLower(reader.Text())
+			searchBinary(keyWord)
+		case 0:
+			return
+		default:
+			fmt.Println("Pilihan tidak valid!")
+		}
+	}
+}
+
+func searchSequential(keyWord string) {
+	var i int
+	var found bool = false
+
+	fmt.Println("\nHasil pencarian:")
+
+	for i = 0; i < catatanAda; i++ {
+		var catatan Catatan = catatanData[i]
+		if strings.Contains(strings.ToLower(catatan.judul), keyWord) ||
+			strings.Contains(strings.ToLower(catatan.topik), keyWord) ||
+			strings.Contains(strings.ToLower(catatan.isiMateri), keyWord) {
+			found = true
+		}
+	}
+
+	if !found {
+		fmt.Println("Tidak ditemukan hasil")
+	}
+}
+
+func searchBinary(keyWord string) {
+	var catatanTerurut []Catatan = make([]Catatan, catatanAda)
+	var i int
+	for i = 0; i < catatanAda; i++ {
+		catatanTerurut[i] = catatanData[i]
+	}
+
+	var n int = catatanAda
+	for i = 0; i < n-1; i++ {
+		var idxMin int = i
+		for j := i + 1; j < n; j++ {
+			if catatanTerurut[j].judul < catatanTerurut[idxMin].judul {
+				idxMin = j
+			}
+		}
+		if idxMin != i {
+			var temp Catatan = catatanTerurut[i]
+			catatanTerurut[i] = catatanTerurut[idxMin]
+			catatanTerurut[idxMin] = temp
+		}
+	}
+
+	var low int = 0
+	var high int = catatanAda - 1
+	var found bool = false
+
+	fmt.Println("\nHasil Pencarian:")
+
+	for low <= high {
+		var mid int = low + (high-low)/2
+		var current string = strings.ToLower(catatanTerurut[mid].judul)
+
+		if strings.Contains(current, keyWord) {
+			catatanDetail(catatanTerurut[mid])
+			found = true
+
+			var left int = mid - 1
+			for left >= 0 && strings.Contains(strings.ToLower(catatanTerurut[left].judul), keyWord) {
+				catatanDetail(catatanTerurut[left])
+				left--
+			}
+
+			var right int = mid + 1
+			for right < catatanAda && strings.Contains(strings.ToLower(catatanTerurut[right].judul), keyWord) {
+				catatanDetail(catatanTerurut[right])
+				right++
+			}
+
+			return
+		} else if catatanTerurut[mid].judul < keyWord {
+			low = mid + 1
+		} else {
+			high = mid - 1
+		}
+	}
+
+	if !found {
+		fmt.Println("Tidak ditemukan hasil")
+	}
 }
