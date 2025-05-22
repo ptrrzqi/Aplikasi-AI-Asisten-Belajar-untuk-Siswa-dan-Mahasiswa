@@ -7,7 +7,8 @@ import (
 	"strings"
 	"time"
 )
-
+// user sudah bisa mengelola catatan & jadwal
+// user sudah bisa mencari catatan dengan opsi "Cari materi" (sequential belum di test)
 // struct catatan belajar
 type Catatan struct {
 	judul     string
@@ -102,7 +103,7 @@ func kelolaCatatan() {
 	}
 }
 
-func addCatatan(c Catatan) { //menambah data catatan
+func addCatatan(c Catatan) {
 	if catatanAda >= catatanMax {
 		fmt.Println("Catatan sudah penuh!")
 		return
