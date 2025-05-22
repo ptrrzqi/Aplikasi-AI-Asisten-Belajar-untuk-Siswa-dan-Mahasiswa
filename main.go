@@ -130,13 +130,14 @@ func tambahCatatan() {
 }
 
 func lihatSemuaCatatan() {
+	var i int
 	fmt.Println("\nDaftar Catatan")
 	if catatanAda == 0 {
 		fmt.Println("Belum ada catatan")
 		return
 	}
 
-	for i := 0; i < catatanAda; i++ {
+	for i = 0; i < catatanAda; i++ {
 		catatan := catatanData[i]
 		fmt.Printf("\nID: %d\nJudul: %s\nTopik: %s\nTanggal: %s\nIsi: %s\n",
 			catatan.ID, catatan.judul, catatan.topik,
@@ -144,14 +145,26 @@ func lihatSemuaCatatan() {
 	}
 }
 
+/*************  ✨ Windsurf Command ⭐  *************/
+// EditCatatan digunakan untuk mengedit catatan yang sudah ada.
+// Pengguna diharuskan memasukkan ID catatan yang ingin di edit.
+// Jika ID tidak ditemukan, maka program akan menampilkan pesan "Catatan tidak ditemukan".
+// Jika ID ditemukan, maka program akan menampilkan isian yang sekarang dan
+// memberikan kesempatan kepada pengguna untuk mengisi ulang.
+// Jika pengguna tidak ingin mengisi ulang, maka cukup tekan Enter saja.
+// Jika pengguna ingin mengisi ulang, maka isian yang sekarang akan dihapus dan digantikan
+// dengan isian yang baru.
+// Setelah pengguna selesai mengedit catatan, maka program akan menampilkan pesan "Catatan berhasil diperbarui".
+/*******  9f27b97e-5686-4c5b-ac87-99a4a7515319  *******/
 func editCatatan() {
+	var i, index int
 	fmt.Println("\nEdit Catatan")
 	fmt.Print("Masukkan ID catatan: ")
 	var id int
 	fmt.Scan(&id)
 
-	index := -1
-	for i := 0; i < catatanAda; i++ {
+	index = -1
+	for i = 0; i < catatanAda; i++ {
 		if catatanData[i].ID == id {
 			index = i
 			break
@@ -190,13 +203,14 @@ func editCatatan() {
 }
 
 func hapusCatatan() {
+	var i, index int
 	fmt.Println("\nHapus Catatan")
 	fmt.Print("Masukkan ID catatan: ")
 	var id int
 	fmt.Scan(&id)
 
-	index := -1
-	for i := 0; i < catatanAda; i++ {
+	index = -1
+	for i = 0; i < catatanAda; i++ {
 		if catatanData[i].ID == id {
 			index = i
 			break
@@ -208,7 +222,7 @@ func hapusCatatan() {
 		return
 	}
 
-	for i := index; i < catatanAda-1; i++ {
+	for i = index; i < catatanAda-1; i++ {
 		catatanData[i] = catatanData[i+1]
 	}
 	catatanAda--
@@ -244,15 +258,17 @@ func kelolaJadwal() {
 }
 
 func lihatJadwal() {
+	var i int
 	fmt.Println("\nDaftar Jadwal")
 	if jadwalAda == 0 {
 		fmt.Println("Belum ada jadwal")
 		return
 	}
 
-	for i := 0; i < jadwalAda; i++ {
+	for i = 0; i < jadwalAda; i++ {
 		jadwal := jadwalBelajarData[i]
-		fmt.Printf("\nHari: %s\nWaktu: %s - %s\nTopik: %s\n", jadwal.hari, jadwal.mulaiBelajar, jadwal.akhirBelajar, jadwal.topikBelajar)
+		fmt.Printf("\nHari: %s\nWaktu: %s - %s\nTopik: %s\n",
+			jadwal.hari, jadwal.mulaiBelajar, jadwal.akhirBelajar, jadwal.topikBelajar)
 	}
 }
 
@@ -293,6 +309,7 @@ func tambahJadwal() {
 }
 
 func validasiWaktu(waktu string) bool {
+	var i int
 	if len(waktu) != 5 {
 		return false
 	}
@@ -300,7 +317,7 @@ func validasiWaktu(waktu string) bool {
 		return false
 	}
 
-	for i := 0; i < 5; i++ {
+	for i = 0; i < 5; i++ {
 		if i == 2 {
 			continue
 		}
