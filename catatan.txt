@@ -18,4 +18,4 @@ NOTE:
 - sequential belum di test
 
 Masalah yang dihadapi: 
-- tidak bisa mengisi amteri dengan spasi atau lebih dari 1 baris = Menggunakan import bufio
+- tidak bisa mengisi amteri dengan spasi atau lebih dari 1 baris = Menggunakan import "bufio" + "os" agar bisa input teks yang mengandung spasi dan berbaris
