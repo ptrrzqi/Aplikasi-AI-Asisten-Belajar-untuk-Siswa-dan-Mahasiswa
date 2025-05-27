@@ -10,8 +10,9 @@ Nama : Putra Rizaqi Athallah
 NIM  : 103012400022
 
 Fitur yang ada : 
-Mengelola Catatan (menambahkan, menghapus, mengubah)
-Menambahkan Jadwal (menambahkan, menghapus, mengubah)
+Mengelola catatan (menambahkan, menghapus, mengubah)
+Menambahkan jadwal (menambahkan, menghapus, mengubah)
+Mencari materi dengan Keyword (Binary Search,
 
 NOTE:
 - Belum bisa menyimpan Catatan/Jadwal saat keluar program, Database hanya digunakan untuk menyimpan perubahan sementara jika Program masih Berjalan
