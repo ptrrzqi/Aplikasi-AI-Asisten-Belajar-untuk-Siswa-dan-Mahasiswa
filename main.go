@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
 	"strings"
@@ -44,6 +45,92 @@ var (
 	IDcatatanAkhir    int = 0
 	IDjadwalAkhir     int = 0
 )
+
+// struct untuk soal pilihan ganda
+type Soal struct {
+	Pertanyaan string
+	Opsi       [4]string
+	Jawaban    string // A, B, C, atau D
+}
+
+// dummy 15 soal pilihan ganda bahasa Inggris
+var soalDummy = []Soal{
+	{
+		Pertanyaan: "What is the synonym of 'happy'?",
+		Opsi:       [4]string{"Sad", "Joyful", "Angry", "Tired"},
+		Jawaban:    "B",
+	},
+	{
+		Pertanyaan: "Choose the correct sentence.",
+		Opsi:       [4]string{"She go to school.", "She goes to school.", "She going to school.", "She gone to school."},
+		Jawaban:    "B",
+	},
+	{
+		Pertanyaan: "What is the past tense of 'run'?",
+		Opsi:       [4]string{"Run", "Runned", "Ran", "Running"},
+		Jawaban:    "C",
+	},
+	{
+		Pertanyaan: "Fill in the blank: I ___ a book.",
+		Opsi:       [4]string{"am reading", "is reading", "are reading", "reading"},
+		Jawaban:    "A",
+	},
+	{
+		Pertanyaan: "Which one is a noun?",
+		Opsi:       [4]string{"Run", "Beautiful", "Dog", "Quickly"},
+		Jawaban:    "C",
+	},
+	{
+		Pertanyaan: "What does 'fast' mean?",
+		Opsi:       [4]string{"Slow", "Quick", "Big", "Small"},
+		Jawaban:    "B",
+	},
+	{
+		Pertanyaan: "Select the correct plural form of 'child'.",
+		Opsi:       [4]string{"Childs", "Childes", "Children", "Child"},
+		Jawaban:    "C",
+	},
+	{
+		Pertanyaan: "What is the antonym of 'cold'?",
+		Opsi:       [4]string{"Hot", "Warm", "Cool", "Freeze"},
+		Jawaban:    "A",
+	},
+	{
+		Pertanyaan: "Choose the correct question: ___ you like coffee?",
+		Opsi:       [4]string{"Do", "Does", "Did", "Are"},
+		Jawaban:    "A",
+	},
+	{
+		Pertanyaan: "What is the correct form of the verb in past: 'He ___ to the market yesterday.'",
+		Opsi:       [4]string{"Go", "Goes", "Went", "Going"},
+		Jawaban:    "C",
+	},
+	{
+		Pertanyaan: "Select the correct sentence:",
+		Opsi:       [4]string{"They is happy.", "They are happy.", "They am happy.", "They be happy."},
+		Jawaban:    "B",
+	},
+	{
+		Pertanyaan: "What does the word 'quickly' describe?",
+		Opsi:       [4]string{"Verb", "Adjective", "Adverb", "Noun"},
+		Jawaban:    "C",
+	},
+	{
+		Pertanyaan: "Fill in the blank: She has ___ apple.",
+		Opsi:       [4]string{"an", "a", "the", "some"},
+		Jawaban:    "A",
+	},
+	{
+		Pertanyaan: "What is the correct comparative form of 'good'?",
+		Opsi:       [4]string{"Gooder", "Better", "More good", "Best"},
+		Jawaban:    "B",
+	},
+	{
+		Pertanyaan: "Choose the correct word: I ___ like swimming.",
+		Opsi:       [4]string{"don't", "doesn't", "didn't", "not"},
+		Jawaban:    "A",
+	},
+}
 
 var reader = bufio.NewScanner(os.Stdin)
 
@@ -271,15 +358,17 @@ func kelolaJadwal() {
 }
 
 func lihatJadwal() {
+	var i int
+	fmt.Println("\nDaftar Jadwal")
 	if jadwalAda == 0 {
-		fmt.Println("\nBelum ada jadwal")
+		fmt.Println("Belum ada jadwal")
 		return
 	}
-	fmt.Println("\nDaftar Jadwal")
-	for i := 0; i < jadwalAda; i++ {
-		j := jadwalBelajarData[i]
+
+	for i = 0; i < jadwalAda; i++ {
+		var jadwal Jadwal = jadwalBelajarData[i]
 		fmt.Printf("\nHari: %s\nWaktu: %s - %s\nTopik: %s\n",
-			j.hari, j.mulaiBelajar, j.akhirBelajar, j.topikBelajar)
+			jadwal.hari, jadwal.mulaiBelajar, jadwal.akhirBelajar, jadwal.topikBelajar)
 	}
 }
 
@@ -414,16 +503,16 @@ func cariMateri() {
 }
 
 func searchSequential(keyWord string) {
-	found := false
+	var i int
+	var found bool = false
 
 	fmt.Println("\nHasil pencarian:")
 
-	for i := 0; i < catatanAda; i++ {
-		c := catatanData[i]
-		if strings.Contains(strings.ToLower(c.judul), keyWord) ||
-			strings.Contains(strings.ToLower(c.topik), keyWord) ||
-			strings.Contains(strings.ToLower(c.isiMateri), keyWord) {
-			catatanDetail(c)
+	for i = 0; i < catatanAda; i++ {
+		var catatan Catatan = catatanData[i]
+		if strings.Contains(strings.ToLower(catatan.judul), keyWord) ||
+			strings.Contains(strings.ToLower(catatan.topik), keyWord) ||
+			strings.Contains(strings.ToLower(catatan.isiMateri), keyWord) {
 			found = true
 		}
 	}
@@ -494,8 +583,59 @@ func searchBinary(keyWord string) {
 	}
 }
 
-// Fungsi generate 10 soal berdasarkan materi input
 func generateSoal() {
+	fmt.Println("\nHalo! Saya AI Manajemen Belajar. ada yang bisa saya bantu?")
+	fmt.Println("Ketik apa saja untuk mulai, atau ketik 'keluar' untuk kembali ke menu utama.")
+
+	for {
+		fmt.Print("Anda: ")
+		input, err := readLine()
+		if err != nil {
+			fmt.Println("Gagal membaca input, coba lagi.")
+			continue
+		}
+
+		input = strings.TrimSpace(strings.ToLower(input))
+		if input == "keluar" {
+			fmt.Println("Kembali ke menu utama...")
+			return
+		}
+
+		// input selain "keluar", tampilkan soal
+		for {
+			rand.Seed(time.Now().UnixNano())
+			fmt.Println("\nBerikut 5 soal latihan bahasa Inggris:")
+
+			indices := rand.Perm(len(soalDummy))[:5]
+
+			for i, idx := range indices {
+				soal := soalDummy[idx]
+				fmt.Printf("\nSoal %d: %s\n", i+1, soal.Pertanyaan)
+				fmt.Printf("A. %s\n", soal.Opsi[0])
+				fmt.Printf("B. %s\n", soal.Opsi[1])
+				fmt.Printf("C. %s\n", soal.Opsi[2])
+				fmt.Printf("D. %s\n", soal.Opsi[3])
+			}
+			fmt.Println("\nJawaban benar ditandai dengan huruf (contoh: B).")
+			fmt.Println("\nKetik apa saja untuk generate soal baru, atau ketik 'keluar' untuk kembali ke menu utama.")
+
+			fmt.Print("Anda: ")
+			input, err = readLine()
+			if err != nil {
+				fmt.Println("Gagal membaca input, coba lagi.")
+				continue
+			}
+
+			if strings.TrimSpace(strings.ToLower(input)) == "keluar" {
+				fmt.Println("Kembali ke menu utama...")
+				return
+			}
+		}
+	}
+}
+
+// Fungsi generate 10 soal berdasarkan materi input
+func generateSoalByGemini() {
 	ctx := context.Background()
 	client, err := genai.NewClient(ctx, &genai.ClientConfig{
 		APIKey:  "AIzaSyCdtVoP4zjaHOiwfdOxOvbBBsFW9AVsNB0", // Ganti dengan API key Gemini yang valid
