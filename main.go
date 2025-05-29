@@ -2,11 +2,17 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"fmt"
+	"log"
 	"os"
+	"strconv"
 	"strings"
 	"time"
+
+	"google.golang.org/genai"
 )
+
 // user sudah bisa mengelola catatan & jadwal
 // user sudah bisa mencari catatan dengan opsi "Cari materi" (sequential belum di test)
 // struct catatan belajar
@@ -39,20 +45,23 @@ var (
 	IDjadwalAkhir     int = 0
 )
 
-func main() {
-	var input int
-	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
+var reader = bufio.NewScanner(os.Stdin)
 
+func main() {
 	for {
 		fmt.Println("\nSelamat datang di Aplikasi AI Manajemen Belajar")
 		fmt.Println("1. Kelola catatan belajar")
 		fmt.Println("2. Kelola jadwal belajar")
 		fmt.Println("3. Cari materi")
+		fmt.Println("4. Generate soal berdasarkan materi")
 		fmt.Println("0. Keluar")
 		fmt.Print("Pilih menu: ")
 
-		fmt.Scan(&input)
-		reader.Scan()
+		input, err := readInt()
+		if err != nil {
+			fmt.Println("Input tidak valid, coba lagi!")
+			continue
+		}
 
 		switch input {
 		case 1:
@@ -61,6 +70,8 @@ func main() {
 			kelolaJadwal()
 		case 3:
 			cariMateri()
+		case 4:
+			generateSoal()
 		case 0:
 			fmt.Println("Terima kasih telah menggunakan aplikasi ini!")
 			return
@@ -71,9 +82,6 @@ func main() {
 }
 
 func kelolaCatatan() {
-	var input int
-	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
-
 	for {
 		fmt.Println("\nMenu Catatan Belajar")
 		fmt.Println("1. Tambah catatan")
@@ -83,8 +91,11 @@ func kelolaCatatan() {
 		fmt.Println("0. Kembali")
 		fmt.Print("Pilih menu: ")
 
-		fmt.Scan(&input)
-		reader.Scan()
+		input, err := readInt()
+		if err != nil {
+			fmt.Println("Input tidak valid, coba lagi!")
+			continue
+		}
 
 		switch input {
 		case 1:
@@ -114,10 +125,6 @@ func addCatatan(c Catatan) {
 
 func tambahCatatan() {
 	var catatanBaru Catatan
-	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
-	var judul string
-	var topik string
-	var isi string
 
 	fmt.Println("\nTambah Catatan Baru")
 
@@ -125,59 +132,50 @@ func tambahCatatan() {
 	catatanBaru.ID = IDcatatanAkhir
 
 	fmt.Print("Judul catatan: ")
-	reader.Scan()
-	judul = reader.Text()
+	judul, _ := readLine()
 	catatanBaru.judul = judul
 
 	fmt.Print("Topik: ")
-	reader.Scan()
-	topik = reader.Text()
+	topik, _ := readLine()
 	catatanBaru.topik = topik
 
 	fmt.Print("Isi materi: ")
-	reader.Scan()
-	isi = reader.Text()
+	isi, _ := readLine()
 	catatanBaru.isiMateri = isi
 
 	catatanBaru.waktu = time.Now()
+
 	addCatatan(catatanBaru)
 	fmt.Println("Catatan berhasil ditambahkan!")
 }
 
 func lihatSemuaCatatan() {
-	var i int
-	fmt.Println("\nDaftar Catatan")
 	if catatanAda == 0 {
-		fmt.Println("Belum ada catatan")
+		fmt.Println("\nBelum ada catatan")
 		return
 	}
-
-	for i = 0; i < catatanAda; i++ {
-		var catatan Catatan = catatanData[i]
-		catatanDetail(catatan)
+	fmt.Println("\nDaftar Catatan")
+	for i := 0; i < catatanAda; i++ {
+		catatanDetail(catatanData[i])
 	}
 }
 
 func catatanDetail(c Catatan) {
 	fmt.Printf("\nID: %d\nJudul: %s\nTopik: %s\nTanggal: %s\nIsi: %s\n",
-		c.ID, c.judul, c.topik, c.waktu.Format("2025-01-02 15:04"), c.isiMateri)
+		c.ID, c.judul, c.topik, c.waktu.Format("2006-01-02 15:04"), c.isiMateri)
 }
 
 func editCatatan() {
-	var i int
-	var index int = -1
-	var id int
-	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
-	var judul string
-	var topik string
-	var isi string
-	var catatan *Catatan = &catatanData[index]
-
 	fmt.Println("\nEdit Catatan")
 	fmt.Print("Masukkan ID catatan: ")
-	fmt.Scan(&id)
+	id, err := readInt()
+	if err != nil {
+		fmt.Println("Input tidak valid")
+		return
+	}
 
-	for i = 0; i < catatanAda; i++ {
+	index := -1
+	for i := 0; i < catatanAda; i++ {
 		if catatanData[i].ID == id {
 			index = i
 			break
@@ -189,40 +187,40 @@ func editCatatan() {
 		return
 	}
 
-	fmt.Printf("Judul (%s): ", catatan.judul)
-	reader.Scan()
-	judul = reader.Text()
+	c := &catatanData[index]
+
+	fmt.Printf("Judul (%s): ", c.judul)
+	judul, _ := readLine()
 	if judul != "" {
-		catatan.judul = judul
+		c.judul = judul
 	}
 
-	fmt.Printf("Topik (%s): ", catatan.topik)
-	reader.Scan()
-	topik = reader.Text()
+	fmt.Printf("Topik (%s): ", c.topik)
+	topik, _ := readLine()
 	if topik != "" {
-		catatan.topik = topik
+		c.topik = topik
 	}
 
-	fmt.Printf("Isi (%s): ", catatan.isiMateri)
-	reader.Scan()
-	isi = reader.Text()
+	fmt.Printf("Isi (%s): ", c.isiMateri)
+	isi, _ := readLine()
 	if isi != "" {
-		catatan.isiMateri = isi
+		c.isiMateri = isi
 	}
 
 	fmt.Println("Catatan berhasil diperbarui")
 }
 
 func hapusCatatan() {
-	var i int
-	var index int = -1
-	var id int
-
 	fmt.Println("\nHapus Catatan")
 	fmt.Print("Masukkan ID catatan: ")
-	fmt.Scan(&id)
+	id, err := readInt()
+	if err != nil {
+		fmt.Println("Input tidak valid")
+		return
+	}
 
-	for i = 0; i < catatanAda; i++ {
+	index := -1
+	for i := 0; i < catatanAda; i++ {
 		if catatanData[i].ID == id {
 			index = i
 			break
@@ -234,7 +232,7 @@ func hapusCatatan() {
 		return
 	}
 
-	for i = index; i < catatanAda-1; i++ {
+	for i := index; i < catatanAda-1; i++ {
 		catatanData[i] = catatanData[i+1]
 	}
 	catatanAda--
@@ -243,7 +241,6 @@ func hapusCatatan() {
 }
 
 func kelolaJadwal() {
-	var input int
 	for {
 		fmt.Println("\nMenu Jadwal Belajar")
 		fmt.Println("1. Lihat jadwal")
@@ -252,7 +249,11 @@ func kelolaJadwal() {
 		fmt.Println("0. Kembali")
 		fmt.Print("Pilih menu: ")
 
-		fmt.Scan(&input)
+		input, err := readInt()
+		if err != nil {
+			fmt.Println("Input tidak valid, coba lagi!")
+			continue
+		}
 
 		switch input {
 		case 1:
@@ -270,51 +271,52 @@ func kelolaJadwal() {
 }
 
 func lihatJadwal() {
-	var i int
-	fmt.Println("\nDaftar Jadwal")
 	if jadwalAda == 0 {
-		fmt.Println("Belum ada jadwal")
+		fmt.Println("\nBelum ada jadwal")
 		return
 	}
-
-	for i = 0; i < jadwalAda; i++ {
-		var jadwal Jadwal = jadwalBelajarData[i]
+	fmt.Println("\nDaftar Jadwal")
+	for i := 0; i < jadwalAda; i++ {
+		j := jadwalBelajarData[i]
 		fmt.Printf("\nHari: %s\nWaktu: %s - %s\nTopik: %s\n",
-			jadwal.hari, jadwal.mulaiBelajar, jadwal.akhirBelajar, jadwal.topikBelajar)
+			j.hari, j.mulaiBelajar, j.akhirBelajar, j.topikBelajar)
 	}
 }
 
 func tambahJadwal() {
-	var jadwalBaru Jadwal
-
-	fmt.Println("\nTambah Jadwal Baru")
-
 	if jadwalAda >= jadwalMax {
 		fmt.Println("Jadwal sudah penuh!")
 		return
 	}
 
+	fmt.Println("\nTambah Jadwal Baru")
+
 	fmt.Print("Hari (contoh: Senin): ")
-	fmt.Scan(&jadwalBaru.hari)
+	hari, _ := readLine()
 
 	fmt.Print("Waktu mulai (HH:MM): ")
-	fmt.Scan(&jadwalBaru.mulaiBelajar)
-
-	if !validasiWaktu(jadwalBaru.mulaiBelajar) {
+	mulai, _ := readLine()
+	if !validasiWaktu(mulai) {
 		fmt.Println("Format waktu salah! Gunakan HH:MM")
 		return
 	}
 
 	fmt.Print("Waktu selesai (HH:MM): ")
-	fmt.Scan(&jadwalBaru.akhirBelajar)
-
-	if !validasiWaktu(jadwalBaru.akhirBelajar) {
+	selesai, _ := readLine()
+	if !validasiWaktu(selesai) {
 		fmt.Println("Format waktu salah! Gunakan HH:MM")
 		return
 	}
 
 	fmt.Print("Topik belajar: ")
-	fmt.Scan(&jadwalBaru.topikBelajar)
+	topik, _ := readLine()
+
+	jadwalBaru := Jadwal{
+		hari:         hari,
+		mulaiBelajar: mulai,
+		akhirBelajar: selesai,
+		topikBelajar: topik,
+	}
 
 	addJadwal(jadwalBaru)
 	fmt.Println("Jadwal berhasil ditambahkan!")
@@ -357,19 +359,20 @@ func validasiWaktu(waktu string) bool {
 }
 
 func hapusJadwal() {
-	var nomor int
-	var i int
-
 	fmt.Println("\nHapus Jadwal")
 	fmt.Print("Masukkan nomor urut jadwal: ")
-	fmt.Scan(&nomor)
+	nomor, err := readInt()
+	if err != nil {
+		fmt.Println("Input tidak valid")
+		return
+	}
 
 	if nomor < 1 || nomor > jadwalAda {
 		fmt.Println("Nomor tidak valid!")
 		return
 	}
 
-	for i = nomor - 1; i < jadwalAda-1; i++ {
+	for i := nomor - 1; i < jadwalAda-1; i++ {
 		jadwalBelajarData[i] = jadwalBelajarData[i+1]
 	}
 	jadwalAda--
@@ -378,10 +381,6 @@ func hapusJadwal() {
 }
 
 func cariMateri() {
-	var input int
-	var keyWord string
-	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
-
 	for {
 		fmt.Println("\nPilih opsi pencarian materi")
 		fmt.Println("1. Berurutan (sequential)")
@@ -389,19 +388,22 @@ func cariMateri() {
 		fmt.Println("0. Kembali")
 		fmt.Print("Pilihan: ")
 
-		fmt.Scan(&input)
-		reader.Scan()
+		input, err := readInt()
+		if err != nil {
+			fmt.Println("Input tidak valid, coba lagi!")
+			continue
+		}
 
 		switch input {
 		case 1:
 			fmt.Print("\nKata Kunci: ")
-			reader.Scan()
-			keyWord = strings.ToLower(reader.Text())
+			keyWord, _ := readLine()
+			keyWord = strings.ToLower(keyWord)
 			searchSequential(keyWord)
 		case 2:
 			fmt.Print("\nKata Kunci: ")
-			reader.Scan()
-			keyWord = strings.ToLower(reader.Text())
+			keyWord, _ := readLine()
+			keyWord = strings.ToLower(keyWord)
 			searchBinary(keyWord)
 		case 0:
 			return
@@ -412,16 +414,16 @@ func cariMateri() {
 }
 
 func searchSequential(keyWord string) {
-	var i int
-	var found bool = false
+	found := false
 
 	fmt.Println("\nHasil pencarian:")
 
-	for i = 0; i < catatanAda; i++ {
-		var catatan Catatan = catatanData[i]
-		if strings.Contains(strings.ToLower(catatan.judul), keyWord) ||
-			strings.Contains(strings.ToLower(catatan.topik), keyWord) ||
-			strings.Contains(strings.ToLower(catatan.isiMateri), keyWord) {
+	for i := 0; i < catatanAda; i++ {
+		c := catatanData[i]
+		if strings.Contains(strings.ToLower(c.judul), keyWord) ||
+			strings.Contains(strings.ToLower(c.topik), keyWord) ||
+			strings.Contains(strings.ToLower(c.isiMateri), keyWord) {
+			catatanDetail(c)
 			found = true
 		}
 	}
@@ -490,4 +492,65 @@ func searchBinary(keyWord string) {
 	if !found {
 		fmt.Println("Tidak ditemukan hasil")
 	}
+}
+
+// Fungsi generate 10 soal berdasarkan materi input
+func generateSoal() {
+	ctx := context.Background()
+	client, err := genai.NewClient(ctx, &genai.ClientConfig{
+		APIKey:  "AIzaSyCdtVoP4zjaHOiwfdOxOvbBBsFW9AVsNB0", // Ganti dengan API key Gemini yang valid
+		Backend: genai.BackendGeminiAPI,
+	})
+	if err != nil {
+		log.Fatalf("Gagal membuat client: %v", err)
+	}
+
+	fmt.Println("\nMasukkan materi untuk generate soal (bahasa Indonesia):")
+	reader := bufio.NewScanner(os.Stdin)
+	if !reader.Scan() {
+		fmt.Println("Gagal membaca input")
+		return
+	}
+	materi := reader.Text()
+
+	fmt.Println("Mohon tunggu, sedang memproses generate soal...")  // <-- info tunggu
+
+	prompt := fmt.Sprintf(`Buatkan 10 soal pilihan ganda dalam bahasa Indonesia berdasarkan materi berikut:
+"%s"
+Setiap soal terdiri dari satu pertanyaan dan 4 opsi jawaban (A, B, C, D).
+Tandai jawaban yang benar dengan jelas.`, materi)
+
+	result, err := client.Models.GenerateContent(
+		ctx,
+		"gemini-2.0-flash",
+		genai.Text(prompt),
+		nil,
+	)
+	if err != nil {
+		log.Fatalf("Gagal generate soal: %v", err)
+	}
+
+	fmt.Println("\nSoal yang dihasilkan:")
+	fmt.Println(result.Text())
+}
+
+// Fungsi helper baca baris string
+func readLine() (string, error) {
+	if reader.Scan() {
+		return reader.Text(), nil
+	}
+	return "", fmt.Errorf("Gagal baca input")
+}
+
+// Fungsi helper baca int dari string input
+func readInt() (int, error) {
+	line, err := readLine()
+	if err != nil {
+		return 0, err
+	}
+	i, err := strconv.Atoi(strings.TrimSpace(line))
+	if err != nil {
+		return 0, err
+	}
+	return i, nil
 }
