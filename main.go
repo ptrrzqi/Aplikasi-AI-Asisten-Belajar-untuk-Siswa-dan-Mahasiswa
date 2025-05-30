@@ -3,12 +3,12 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 	"time"
 )
-// user sudah bisa mengelola catatan & jadwal
-// user sudah bisa mencari catatan dengan opsi "Cari materi" (sequential belum di test)
+
 // struct catatan belajar
 type Catatan struct {
 	judul     string
@@ -39,15 +39,33 @@ var (
 	IDjadwalAkhir     int = 0
 )
 
+type Soal struct { //struct soal
+	soalPertanyaan string
+}
+
+var daftarSoal = []Soal{ //kumpulan soal untuk buatSoal
+	{"Apa ibukota Indonesia?"},
+	{"Berapa hasil dari 2 + 2?"},
+	{"Siapa presiden pertama Indonesia?"},
+	{"Apa warna langit pada siang hari yang cerah?"},
+	{"Planet terdekat dari matahari?"},
+	{"Apa lambang kimia untuk emas?"},
+	{"Berapa banyak sisi yang dimiliki segitiga?"},
+	{"Apa nama benua terbesar di dunia?"},
+	{"Bahasa pemrograman yang dikembangkan Google pada 2009?"},
+	{"Apa nama gunung tertinggi di dunia?"},
+}
+
 func main() {
 	var input int
 	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
 
 	for {
 		fmt.Println("\nSelamat datang di Aplikasi AI Manajemen Belajar")
-		fmt.Println("1. Kelola catatan belajar")
+		fmt.Println("1. Kelola catatan materi belajar")
 		fmt.Println("2. Kelola jadwal belajar")
 		fmt.Println("3. Cari materi")
+		fmt.Println("4. Buat soal latihan")
 		fmt.Println("0. Keluar")
 		fmt.Print("Pilih menu: ")
 
@@ -61,8 +79,10 @@ func main() {
 			kelolaJadwal()
 		case 3:
 			cariMateri()
+		case 4:
+			buatSoal()
 		case 0:
-			fmt.Println("Terima kasih telah menggunakan aplikasi ini!")
+			fmt.Println("Terima kasih sudah menggunakan aplikasi ini, senang membantu anda!")
 			return
 		default:
 			fmt.Println("Pilihan tidak valid, coba lagi!")
@@ -383,7 +403,7 @@ func cariMateri() {
 	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Println("\nPilih opsi pencarian materi")
+		fmt.Println("\nSilahkan pilih metode pencarian catatan materi")
 		fmt.Println("1. Berurutan (sequential)")
 		fmt.Println("2. Binary search")
 		fmt.Println("0. Kembali")
@@ -394,15 +414,15 @@ func cariMateri() {
 
 		switch input {
 		case 1:
-			fmt.Print("\nKata Kunci: ")
+			fmt.Print("\nKata kunci: ")
 			reader.Scan()
 			keyWord = strings.ToLower(reader.Text())
-			searchSequential(keyWord)
+			cariSequential(keyWord)
 		case 2:
-			fmt.Print("\nKata Kunci: ")
+			fmt.Print("\nKata kunci: ")
 			reader.Scan()
 			keyWord = strings.ToLower(reader.Text())
-			searchBinary(keyWord)
+			cariBinary(keyWord)
 		case 0:
 			return
 		default:
@@ -411,7 +431,7 @@ func cariMateri() {
 	}
 }
 
-func searchSequential(keyWord string) {
+func cariSequential(keyWord string) {
 	var i int
 	var found bool = false
 
@@ -427,11 +447,11 @@ func searchSequential(keyWord string) {
 	}
 
 	if !found {
-		fmt.Println("Tidak ditemukan hasil")
+		fmt.Println("Tidak menemukan hasil")
 	}
 }
 
-func searchBinary(keyWord string) {
+func cariBinary(keyWord string) {
 	var catatanTerurut []Catatan = make([]Catatan, catatanAda)
 	var i int
 	for i = 0; i < catatanAda; i++ {
@@ -457,7 +477,7 @@ func searchBinary(keyWord string) {
 	var high int = catatanAda - 1
 	var found bool = false
 
-	fmt.Println("\nHasil Pencarian:")
+	fmt.Println("\nHasil pencarian:")
 
 	for low <= high {
 		var mid int = low + (high-low)/2
@@ -488,6 +508,35 @@ func searchBinary(keyWord string) {
 	}
 
 	if !found {
-		fmt.Println("Tidak ditemukan hasil")
+		fmt.Println("Tidak menemukan hasil")
+	}
+}
+
+func buatSoal() {
+	var i int
+	fmt.Println("\n=== Soal Latihan Acak ===")
+
+	if len(daftarSoal) < 3 {
+		fmt.Println("Maaf, soal yang tersedia tidak cukup!")
+		return
+	}
+
+	var soalTampil [3]Soal
+	var indeksAcak int
+	var sudahDipilih = make(map[int]bool)
+
+	for i = 0; i < 3; i++ {
+		for {
+			indeksAcak = rand.Intn(len(daftarSoal))
+			if !sudahDipilih[indeksAcak] {
+				sudahDipilih[indeksAcak] = true
+				soalTampil[i] = daftarSoal[indeksAcak]
+				break
+			}
+		}
+	}
+
+	for i = 0; i < 3; i++ {
+		fmt.Printf("\nSoal %d: %s\n", i+1, soalTampil[i].soalPertanyaan)
 	}
 }
