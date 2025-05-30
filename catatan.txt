@@ -12,11 +12,11 @@ NIM  : 103012400022
 Fitur yang ada : 
 Mengelola catatan (menambahkan, menghapus, mengubah)
 Menambahkan jadwal (menambahkan, menghapus, mengubah)
-Mencari materi dengan Keyword (Binary Search,
+Mencari materi dengan Keyword (Binary Search, Sequential Search)
+Membuat soal dari kumpulan soal yang tersedia, output akan mengambil 3 soal secara acak (menggunakan math/rand)
 
 NOTE:
-- Belum bisa menyimpan Catatan/Jadwal saat keluar program, Database hanya digunakan untuk menyimpan perubahan sementara jika Program masih Berjalan
-- sequential belum di test
+- Belum bisa menyimpan Catatan/Jadwal saat keluar program, Database hanya digunakan untuk menyimpan perubahan sementara jika Program masih Berjalar
 
 Masalah yang dihadapi: 
-- tidak bisa mengisi amteri dengan spasi atau lebih dari 1 baris = Menggunakan import "bufio" + "os" agar bisa input teks yang mengandung spasi dan berbaris (https://stackoverflow.com/questions/27414598/golang-accepting-input-with-spaces) 
+- tidak bisa mengisi materi dengan spasi atau lebih dari 1 baris = Menggunakan import "bufio" + "os" agar bisa input teks yang mengandung spasi dan berbaris (https://stackoverflow.com/questions/27414598/golang-accepting-input-with-spaces) 
