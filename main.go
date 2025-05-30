@@ -43,19 +43,6 @@ type Soal struct { //struct soal
 	soalPertanyaan string
 }
 
-var daftarSoal = []Soal{ //kumpulan soal untuk buatSoal
-	{"Apa ibukota Indonesia?"},
-	{"Berapa hasil dari 2 + 2?"},
-	{"Siapa presiden pertama Indonesia?"},
-	{"Apa warna langit pada siang hari yang cerah?"},
-	{"Planet terdekat dari matahari?"},
-	{"Apa lambang kimia untuk emas?"},
-	{"Berapa banyak sisi yang dimiliki segitiga?"},
-	{"Apa nama benua terbesar di dunia?"},
-	{"Bahasa pemrograman yang dikembangkan Google pada 2009?"},
-	{"Apa nama gunung tertinggi di dunia?"},
-}
-
 func main() {
 	var input int
 	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
@@ -510,6 +497,17 @@ func cariBinary(keyWord string) {
 	if !found {
 		fmt.Println("Tidak menemukan hasil")
 	}
+}
+
+var daftarSoal = []Soal{ //kumpulan soal untuk buatSoal
+	{"Apa ibukota Indonesia?"},
+	{"Siapa presiden pertama Indonesia?"},
+	{"Planet terdekat dari matahari?"},
+	{"Apa lambang kimia untuk emas?"},
+	{"Berapa banyak sisi yang dimiliki segitiga?"},
+	{"Apa nama benua terbesar di dunia?"},
+	{"Bahasa pemrograman yang dikembangkan Google pada 2009?"},
+	{"Apa nama gunung tertinggi di dunia?"},
 }
 
 func buatSoal() {
