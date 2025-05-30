@@ -19,4 +19,4 @@ NOTE:
 - Belum bisa menyimpan Catatan/Jadwal saat keluar program, Database hanya digunakan untuk menyimpan perubahan sementara jika Program masih Berjalar
 
 Masalah yang dihadapi: 
-- tidak bisa mengisi materi dengan spasi atau lebih dari 1 baris = Menggunakan import "bufio" + "os" agar bisa input teks yang mengandung spasi dan berbaris (https://stackoverflow.com/questions/27414598/golang-accepting-input-with-spaces) 
+- tidak bisa mengisi materi dengan spasi = Menggunakan import "bufio" + "os" agar bisa input teks yang mengandung spasi dan berbaris (https://stackoverflow.com/questions/27414598/golang-accepting-input-with-spaces) 
