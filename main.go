@@ -39,7 +39,7 @@ var (
 	IDjadwalAkhir     int = 0
 )
 
-type Soal struct { //struct soal
+type Soal struct {
 	soalPertanyaan string
 }
 
@@ -82,7 +82,7 @@ func kelolaCatatan() {
 	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Println("\nMenu Catatan Belajar")
+		fmt.Println("\nAda yang bisa saya bantu untuk Catatan anda?")
 		fmt.Println("1. Tambah catatan")
 		fmt.Println("2. Lihat catatan")
 		fmt.Println("3. Ubah catatan")
@@ -167,7 +167,7 @@ func lihatSemuaCatatan() {
 
 func catatanDetail(c Catatan) {
 	fmt.Printf("\nID: %d\nJudul: %s\nTopik: %s\nTanggal: %s\nIsi: %s\n",
-		c.ID, c.judul, c.topik, c.waktu.Format("2025-01-02 15:04"), c.isiMateri)
+		c.ID, c.judul, c.topik, c.waktu.Format("2006-01-02 15:04"), c.isiMateri)
 }
 
 func editCatatan() {
@@ -178,11 +178,11 @@ func editCatatan() {
 	var judul string
 	var topik string
 	var isi string
-	var catatan *Catatan = &catatanData[index]
 
 	fmt.Println("\nEdit Catatan")
 	fmt.Print("Masukkan ID catatan: ")
 	fmt.Scan(&id)
+	reader.Scan()
 
 	for i = 0; i < catatanAda; i++ {
 		if catatanData[i].ID == id {
@@ -195,6 +195,8 @@ func editCatatan() {
 		fmt.Println("Catatan tidak ditemukan")
 		return
 	}
+
+	var catatan *Catatan = &catatanData[index]
 
 	fmt.Printf("Judul (%s): ", catatan.judul)
 	reader.Scan()
@@ -252,9 +254,9 @@ func hapusCatatan() {
 func kelolaJadwal() {
 	var input int
 	for {
-		fmt.Println("\nMenu Jadwal Belajar")
-		fmt.Println("1. Lihat jadwal")
-		fmt.Println("2. Tambah jadwal")
+		fmt.Println("\nAda yang bisa saya bantu untuk Jadwal anda?")
+		fmt.Println("1. Tambah jadwal")
+		fmt.Println("2. Lihat jadwal")
 		fmt.Println("3. Hapus jadwal")
 		fmt.Println("0. Kembali")
 		fmt.Print("Pilih menu: ")
@@ -263,9 +265,9 @@ func kelolaJadwal() {
 
 		switch input {
 		case 1:
-			lihatJadwal()
-		case 2:
 			tambahJadwal()
+		case 2:
+			lihatJadwal()
 		case 3:
 			hapusJadwal()
 		case 0:
@@ -499,9 +501,11 @@ func cariBinary(keyWord string) {
 	}
 }
 
-var daftarSoal = []Soal{ //kumpulan soal untuk buatSoal
+var daftarSoal = []Soal{
 	{"Apa ibukota Indonesia?"},
+	{"Berapa hasil dari 2 + 2?"},
 	{"Siapa presiden pertama Indonesia?"},
+	{"Apa warna langit pada siang hari yang cerah?"},
 	{"Planet terdekat dari matahari?"},
 	{"Apa lambang kimia untuk emas?"},
 	{"Berapa banyak sisi yang dimiliki segitiga?"},
@@ -512,7 +516,7 @@ var daftarSoal = []Soal{ //kumpulan soal untuk buatSoal
 
 func buatSoal() {
 	var i int
-	fmt.Println("\n=== Soal Latihan Acak ===")
+	fmt.Println("\nBerikut soal-soal latihannya")
 
 	if len(daftarSoal) < 3 {
 		fmt.Println("Maaf, soal yang tersedia tidak cukup!")
@@ -535,6 +539,6 @@ func buatSoal() {
 	}
 
 	for i = 0; i < 3; i++ {
-		fmt.Printf("\nSoal %d: %s\n", i+1, soalTampil[i].soalPertanyaan)
+		fmt.Printf("\n%d: %s\n", i+1, soalTampil[i].soalPertanyaan)
 	}
 }
