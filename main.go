@@ -50,13 +50,13 @@ func main() {
 	for {
 		fmt.Println("\nSelamat datang di Aplikasi AI Manajemen Belajar,")
 		fmt.Println("Ada yang bisa saya bantu?")
-		fmt.Println()
+		fmt.Println("================================================")
 		fmt.Println("1. Kelola catatan materi belajar")
 		fmt.Println("2. Kelola jadwal belajar")
 		fmt.Println("3. Cari materi")
 		fmt.Println("4. Buat soal latihan")
 		fmt.Println("0. Keluar")
-		fmt.Println()
+		fmt.Println("================================================")
 		fmt.Print("Pilih menu: ")
 
 		fmt.Scan(&input)
@@ -86,11 +86,13 @@ func kelolaCatatan() {
 
 	for {
 		fmt.Println("\nAda yang bisa saya bantu untuk Catatan anda?")
+		fmt.Println("============================================")
 		fmt.Println("1. Tambah catatan")
 		fmt.Println("2. Lihat catatan")
 		fmt.Println("3. Ubah catatan")
 		fmt.Println("4. Hapus catatan")
 		fmt.Println("0. Kembali")
+		fmt.Println("============================================")
 		fmt.Print("Pilih menu: ")
 
 		fmt.Scan(&input)
@@ -258,10 +260,12 @@ func kelolaJadwal() {
 	var input int
 	for {
 		fmt.Println("\nAda yang bisa saya bantu untuk Jadwal anda?")
+		fmt.Println("===========================================")
 		fmt.Println("1. Tambah jadwal")
 		fmt.Println("2. Lihat jadwal")
 		fmt.Println("3. Hapus jadwal")
 		fmt.Println("0. Kembali")
+		fmt.Println("===========================================")
 		fmt.Print("Pilih menu: ")
 
 		fmt.Scan(&input)
@@ -396,9 +400,11 @@ func cariMateri() {
 
 	for {
 		fmt.Println("\nSilahkan pilih metode pencarian materi berdasarkan Judul/Topiknya")
+		fmt.Println("=================================================================")
 		fmt.Println("1. Berurutan (sequential)")
 		fmt.Println("2. Binary search")
 		fmt.Println("0. Kembali")
+		fmt.Println("=================================================================")
 		fmt.Print("Pilihan: ")
 
 		fmt.Scan(&input)
