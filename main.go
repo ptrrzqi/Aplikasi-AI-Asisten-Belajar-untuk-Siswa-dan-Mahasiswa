@@ -48,12 +48,15 @@ func main() {
 	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Println("\nSelamat datang di Aplikasi AI Manajemen Belajar")
+		fmt.Println("\nSelamat datang di Aplikasi AI Manajemen Belajar,")
+		fmt.Println("Ada yang bisa saya bantu?")
+		fmt.Println()
 		fmt.Println("1. Kelola catatan materi belajar")
 		fmt.Println("2. Kelola jadwal belajar")
 		fmt.Println("3. Cari materi")
 		fmt.Println("4. Buat soal latihan")
 		fmt.Println("0. Keluar")
+		fmt.Println()
 		fmt.Print("Pilih menu: ")
 
 		fmt.Scan(&input)
@@ -392,7 +395,7 @@ func cariMateri() {
 	var reader *bufio.Scanner = bufio.NewScanner(os.Stdin)
 
 	for {
-		fmt.Println("\nSilahkan pilih metode pencarian catatan materi")
+		fmt.Println("\nSilahkan pilih metode pencarian materi berdasarkan Judul/Topiknya")
 		fmt.Println("1. Berurutan (sequential)")
 		fmt.Println("2. Binary search")
 		fmt.Println("0. Kembali")
@@ -420,7 +423,7 @@ func cariMateri() {
 	}
 }
 
-func cariSequential(keyWord string) {
+func cariSequential(keyWord string) { // search sequential dari judul/topik
 	var i int
 	var found bool = false
 
@@ -429,8 +432,8 @@ func cariSequential(keyWord string) {
 	for i = 0; i < catatanAda; i++ {
 		var catatan Catatan = catatanData[i]
 		if strings.Contains(strings.ToLower(catatan.judul), keyWord) ||
-			strings.Contains(strings.ToLower(catatan.topik), keyWord) ||
-			strings.Contains(strings.ToLower(catatan.isiMateri), keyWord) {
+			strings.Contains(strings.ToLower(catatan.topik), keyWord) {
+			catatanDetail(catatan)
 			found = true
 		}
 	}
@@ -440,9 +443,9 @@ func cariSequential(keyWord string) {
 	}
 }
 
-func cariBinary(keyWord string) {
+func cariBinary(keyWord string) { //search binary dari judul/topik
 	var catatanTerurut []Catatan = make([]Catatan, catatanAda)
-	var i int
+	var i, j int
 	for i = 0; i < catatanAda; i++ {
 		catatanTerurut[i] = catatanData[i]
 	}
@@ -450,7 +453,7 @@ func cariBinary(keyWord string) {
 	var n int = catatanAda
 	for i = 0; i < n-1; i++ {
 		var idxMin int = i
-		for j := i + 1; j < n; j++ {
+		for j = i + 1; j < n; j++ {
 			if catatanTerurut[j].judul < catatanTerurut[idxMin].judul {
 				idxMin = j
 			}
@@ -470,24 +473,36 @@ func cariBinary(keyWord string) {
 
 	for low <= high {
 		var mid int = low + (high-low)/2
-		var current string = strings.ToLower(catatanTerurut[mid].judul)
+		var currentJudul string = strings.ToLower(catatanTerurut[mid].judul)
+		var currentTopik string = strings.ToLower(catatanTerurut[mid].topik)
 
-		if strings.Contains(current, keyWord) {
+		if strings.Contains(currentJudul, keyWord) || strings.Contains(currentTopik, keyWord) {
 			catatanDetail(catatanTerurut[mid])
 			found = true
 
 			var left int = mid - 1
-			for left >= 0 && strings.Contains(strings.ToLower(catatanTerurut[left].judul), keyWord) {
-				catatanDetail(catatanTerurut[left])
-				left--
+			for left >= 0 {
+				currentJudul = strings.ToLower(catatanTerurut[left].judul)
+				currentTopik = strings.ToLower(catatanTerurut[left].topik)
+				if strings.Contains(currentJudul, keyWord) || strings.Contains(currentTopik, keyWord) {
+					catatanDetail(catatanTerurut[left])
+					left--
+				} else {
+					break
+				}
 			}
 
 			var right int = mid + 1
-			for right < catatanAda && strings.Contains(strings.ToLower(catatanTerurut[right].judul), keyWord) {
-				catatanDetail(catatanTerurut[right])
-				right++
+			for right < catatanAda {
+				currentJudul = strings.ToLower(catatanTerurut[right].judul)
+				currentTopik = strings.ToLower(catatanTerurut[right].topik)
+				if strings.Contains(currentJudul, keyWord) || strings.Contains(currentTopik, keyWord) {
+					catatanDetail(catatanTerurut[right])
+					right++
+				} else {
+					break
+				}
 			}
-
 			return
 		} else if catatanTerurut[mid].judul < keyWord {
 			low = mid + 1
@@ -501,9 +516,8 @@ func cariBinary(keyWord string) {
 	}
 }
 
-var daftarSoal = []Soal{
+var daftarSoal = []Soal{ //kumpulan soal
 	{"Apa ibukota Indonesia?"},
-	{"Berapa hasil dari 2 + 2?"},
 	{"Siapa presiden pertama Indonesia?"},
 	{"Apa warna langit pada siang hari yang cerah?"},
 	{"Planet terdekat dari matahari?"},
