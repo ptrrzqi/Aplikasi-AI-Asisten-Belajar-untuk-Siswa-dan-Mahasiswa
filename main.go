@@ -9,7 +9,6 @@ import (
 	"time"
 )
 
-// struct catatan belajar
 type Catatan struct {
 	judul     string
 	topik     string
@@ -18,7 +17,6 @@ type Catatan struct {
 	ID        int
 }
 
-// struct jadwal belajar
 type Jadwal struct {
 	hari         string
 	mulaiBelajar string
@@ -29,7 +27,6 @@ type Jadwal struct {
 const catatanMax = 100
 const jadwalMax = 50
 
-// database yang menampung catatan dan jadwal belajar
 var (
 	catatanData       [catatanMax]Catatan
 	jadwalBelajarData [jadwalMax]Jadwal
@@ -429,7 +426,7 @@ func cariMateri() {
 	}
 }
 
-func cariSequential(keyWord string) { // search sequential dari judul/topik
+func cariSequential(keyWord string) {
 	var i int
 	var found bool = false
 
@@ -449,7 +446,7 @@ func cariSequential(keyWord string) { // search sequential dari judul/topik
 	}
 }
 
-func cariBinary(keyWord string) { //search binary dari judul/topik
+func cariBinary(keyWord string) { 
 	var catatanTerurut []Catatan = make([]Catatan, catatanAda)
 	var i, j int
 	for i = 0; i < catatanAda; i++ {
@@ -522,7 +519,7 @@ func cariBinary(keyWord string) { //search binary dari judul/topik
 	}
 }
 
-var daftarSoal = []Soal{ //kumpulan soal
+var daftarSoal = []Soal{ 
 	{"Apa ibukota Indonesia?"},
 	{"Siapa presiden pertama Indonesia?"},
 	{"Apa warna langit pada siang hari yang cerah?"},
